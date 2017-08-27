@@ -9,7 +9,25 @@ open import Data.Vec        public
 open import Data.String     public
   renaming (_≟_ to _≟𝕊_)
   hiding (fromList ; toList ; decSetoid ; setoid)
+open import Data.Empty
+
 
 open import Relation.Binary.PropositionalEquality public
-  hiding ([_])
+  hiding ([_] ; subst)
 open import Relation.Nullary public
+
+open import Function public
+
+module TrustMe where
+
+  private postulate erasedBottom : ⊥
+
+  erase-⊥ : ⊥ → ⊥
+  erase-⊥ _ = erasedBottom
+
+  open import Relation.Binary.PropositionalEquality.TrustMe public
+
+  unsafeNotEqual : ∀ {a} {A : Set a} {x y : A} → ¬ (x ≡ y)
+  unsafeNotEqual _ = erasedBottom
+
+
