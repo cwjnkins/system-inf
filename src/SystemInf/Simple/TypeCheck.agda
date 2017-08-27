@@ -10,45 +10,45 @@ open TypeSubst using () renaming (_[/_]  to _[/tp_])
 open CtxSubst  using () renaming (weaken to weakenCtx)
 
 data TyInf {m n} (Γ : Ctx m n) : Term m n → Set where
-  ok  : ∀ {a t} → (wt : Γ ⊢ a ∈ t) → TyInf Γ a
-  bad : ∀ {t} → (msg : String) → TyInf Γ t
+  ok  : ∀ {a} t → (wt : Γ ⊢ a ∈ t) → TyInf Γ a
+  bad : ∀ {a} → (msg : String) → TyInf Γ a
 
 inferType : ∀ {m n} (Γ : Ctx m n) t → TyInf Γ t
 inferType Γ (var x)
-  = ok (var x)
-inferType Γ (Λ t)
-  with inferType (weakenCtx Γ) t
+  = ok (lookup x Γ) (var x)
+inferType Γ (Λ a)
+  with inferType (weakenCtx Γ) a
 ... | bad msg
   = bad msg
-... | ok wt = ok (Λ wt)
+... | ok t wt = ok (∀' t) (Λ wt)
 inferType Γ (λ' t a)
   with inferType (t ∷ Γ) a
 ... | bad msg
   = bad msg
-... | ok {t = s} wt = ok (λ' t wt)
+... | ok s wt = ok (t →' s) (λ' t wt)
 inferType Γ (a [ t ])
   with inferType Γ a
 ... | bad msg
   = bad msg
-... | ok {t = var x} wt
+... | ok (var _) wt
   = bad ""
-... | ok {t = s' →' t'} wt
+... | ok (s' →' t') wt
   = bad ""
-... | ok {t = ∀' t'} wt
-  = ok {t = t' [/tp t ]} (wt [ t ])
+... | ok (∀' t') wt
+  = ok (t' [/tp t ]) (wt [ t ])
 inferType Γ (a · b)
   with inferType Γ a | inferType Γ b
 ... | bad msg  | _ = bad msg
 ... |  _       | (bad msg) = bad msg
-... | ok {t = s →' t} wt₁ | (ok {t = s'} wt₂)
+... | ok (s →' t) wt₁ | (ok s' wt₂)
   with s ≟T s'
 ... | (no ¬p)
   = bad ""
 inferType Γ (a · b)
-  | ok {_} {s →' t} wt₁ | (ok {_} {.s} wt₂)
+  | ok (s →' t) wt₁ | (ok .s wt₂)
   | (yes refl)
-  = ok {t = t} (wt₁ · wt₂)
-inferType Γ (a · b) | ok {t = _} wt₁ | (ok {t = t} wt₂)
+  = ok t (wt₁ · wt₂)
+inferType Γ (a · b) | ok _ wt₁ | (ok _ wt₂)
   = bad ""
 
 
