@@ -5,6 +5,6 @@ open import SystemInf.Type
 
 module Simple where
 
-  open import SystemInf.Simple.Term
-  open import SystemInf.Simple.WtTerm
-  open import SystemInf.Simple.TypeCheck
+  open import SystemInf.Simple
+  open import SystemInf.Simple.Examples
+
