@@ -16,7 +16,6 @@ data Type (n : ℕ) : Set where
   _→'_  : (τ₁ τ₂ : Type n)    → Type n
   ∀'    : (τ : Type (1 + n))  → Type n
 
-
 ------------------------------------------------------------------------
 -- Substitutions in types
 
@@ -103,3 +102,25 @@ module TypeEquality where
   x ≟T y                       = no TrustMe.unsafeNotEqual
 
 open TypeEquality using (_≟T_) public
+
+-- Some common types
+module Types where
+  private
+    ↑_ = TypeSubst.weaken
+
+  Top : ∀ {n} → Type n
+  Top = ∀' (var zero →' var zero)
+  --    ∀ X . X → X
+
+  Bot : ∀ {n} → Type n
+  Bot = ∀' (var zero)
+  --    ∀ X . X
+
+  _×_ : ∀ {n} → (A B : Type n) → Type n
+  A × B = ∀' ((↑ A →' ↑ B →' var zero) →' var zero)
+
+  _∪_ : ∀ {n} →  (A B : Type n) → Type n
+  A ∪ B = ∀' ((↑ A →' var zero) →' (↑ B →' var zero) →' var zero)
+
+  𝔹 : ∀ {n} → Type n
+  𝔹 = ∀' (var zero →' var zero →' var zero)
