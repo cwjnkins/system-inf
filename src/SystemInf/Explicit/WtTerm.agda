@@ -1,11 +1,11 @@
-module SystemInf.Simple.WtTerm where
+module SystemInf.Explicit.WtTerm where
 
 open import SystemInf.Prelude
 
 open import Data.Fin.Substitution
 
 open import SystemInf.Type
-open import SystemInf.Simple.Term
+open import SystemInf.Explicit.Term
 
 ------------------------------------------------------------------------
 -- Typing derivations for polymorphic lambda terms

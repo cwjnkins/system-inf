@@ -1,10 +1,10 @@
-module SystemInf.Simple.Examples where
+module SystemInf.Explicit.Examples where
 
 open import SystemInf.Prelude
   hiding (id)
 open import SystemInf.Type
 
-open import SystemInf.Simple
+open import SystemInf.Explicit
 
 module Terms where
   open Types public

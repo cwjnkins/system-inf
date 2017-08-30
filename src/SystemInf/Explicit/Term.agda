@@ -1,4 +1,4 @@
-module SystemInf.Simple.Term where
+module SystemInf.Explicit.Term where
 
 open import SystemInf.Prelude
 

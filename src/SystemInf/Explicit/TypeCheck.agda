@@ -1,10 +1,10 @@
-module SystemInf.Simple.TypeCheck where
+module SystemInf.Explicit.TypeCheck where
 
 open import SystemInf.Prelude
 open import SystemInf.Type
 
-open import SystemInf.Simple.Term
-open import SystemInf.Simple.WtTerm
+open import SystemInf.Explicit.Term
+open import SystemInf.Explicit.WtTerm
 
 open TypeSubst using () renaming (_[/_]  to _[/tp_])
 open CtxSubst  using () renaming (weaken to weakenCtx)

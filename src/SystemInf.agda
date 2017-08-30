@@ -3,8 +3,8 @@ module SystemInf where
 open import SystemInf.Prelude
 open import SystemInf.Type
 
-module Simple where
+module Explicit where
 
-  open import SystemInf.Simple
-  open import SystemInf.Simple.Examples
+  open import SystemInf.Explicit
+  open import SystemInf.Explicit.Examples
 
