@@ -51,6 +51,10 @@ module TypeSubst where
   _[/_] : ∀ {n} → Type (1 + n) → Type n → Type n
   a [/ b ] = a / sub b
 
+open TypeSubst public
+  using ()
+  renaming (weaken to weakenTy)
+
 open import Relation.Binary.PropositionalEquality.TrustMe
 
 module TypeEquality where

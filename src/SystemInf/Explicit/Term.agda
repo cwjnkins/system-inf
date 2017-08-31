@@ -1,9 +1,8 @@
 module SystemInf.Explicit.Term where
 
 open import SystemInf.Prelude
-
 open import SystemInf.Type
-open import Data.Fin.Substitution
+open import SystemInf.Substitution as Subst
 
 infixl 9 _[_] _·_
 
@@ -17,119 +16,50 @@ data Term (m n : ℕ) : Set where
   _·_     : Term m n     → Term m n       → Term m n  -- term application
 
 module TermTypeSubst where
+  open Subst.Generic Term
 
-  module TermTypeApp {T} (l : Lift T Type) where
+  module _ {T} (l : Lift T Type) where
     open Lift l hiding (var)
     open TypeSubst.TypeApp l renaming (_/_ to _/tp_)
 
-    infixl 8 _/_
+    infixl 8 _/ty'_
+    --     -- Apply a type substitution to a term
+    _/ty'_ : ∀ {m n k} → Term m n → Sub T n k → Term m k
+    var x      /ty' σ = var x
+    Λ t        /ty' σ = Λ (t /ty' σ ↑)
+    λ' a t     /ty' σ = λ' (a /tp σ) (t /ty' σ)
+    t [ a ]    /ty' σ = (t /ty' σ) [ a /tp σ ]
+    s · t      /ty' σ = (s /ty' σ) · (t /ty' σ)
 
-    -- Apply a type substitution to a term
-    _/_ : ∀ {m n k} → Term m n → Sub T n k → Term m k
-    var x      / σ = var x
-    Λ t        / σ = Λ (t / σ ↑)
-    λ' a t     / σ = λ' (a /tp σ) (t / σ)
-    t [ a ]    / σ = (t / σ) [ a /tp σ ]
-    s · t      / σ = (s / σ) · (t / σ)
+  tySub : TmTySubst
+  tySub =
+    record { _/ty_ = λ l tm subst → _/ty'_ l tm subst }
 
-
-  open TypeSubst using (varLift; termLift; sub)
-
-  module Lifted {T} (lift : Lift T Type) {m} where
-    application : Application (Term m) T
-    application = record { _/_ = TermTypeApp._/_ lift {m = m} }
-
-    open Application application public
-
-  open Lifted termLift public
-
-    -- Apply a type variable substitution (renaming) to a term
-  _/Var_ : ∀ {m n k} → Term m n → Sub Fin n k → Term m k
-  _/Var_ = TermTypeApp._/_ varLift
-
-  -- Weaken a term with an additional type variable
-  weaken : ∀ {m n} → Term m n → Term m (suc n)
-  weaken t = t /Var VarSubst.wk
+  open TermType tySub public
+open TermTypeSubst public
+  using ()
+  renaming (weaken to weakenTmTy ; _/_ to _/tmty_ ; _[/_] to _[/tmty_])
 
 module TermTermSubst where
+  open Subst.Generic Term
 
-  -- Substitutions of terms in terms
-  --
-  -- A TermSub T m n k is a substitution which, when applied to a term
-  -- with at most m free term variables and n free type variables,
-  -- yields a term with at most k free term variables and n free type
-  -- variables.
-  TermSub : (ℕ → ℕ → Set) → ℕ → ℕ → ℕ → Set
-  TermSub T m n k = Sub (flip T n) m k
+  module _ {T} (l : TmLift T) where
+    open TmLift l
 
-  record TermLift (T : ℕ → ℕ → Set) : Set where
-    infix 10 _↑tm _↑tp
-    field
-      lift : ∀ {m n} → T m n → Term m n
-      _↑tm : ∀ {m n k} → TermSub T m n k → TermSub T (suc m) n (suc k)
-      _↑tp : ∀ {m n k} → TermSub T m n k → TermSub T m (suc n) k
+    infixl 8 _/tm'_
+    _/tm'_ : ∀ {m n k} → Term m n → TmSub T m n k → Term k n
+    var x   /tm' ρ = lift (lookup x ρ)
+    Λ x     /tm' ρ = Λ (x /tm' ρ ↑ty)
+    λ' t a  /tm' ρ = λ' t (a /tm' ρ ↑tm)
+    a [ t ] /tm' ρ = (a /tm' ρ) [ t ]
+    a · b   /tm' ρ = (a /tm' ρ) · (b /tm' ρ)
 
-  module TermTermApp {T} (l : TermLift T) where
-    open TermLift l
+  tmSub : TmTmSubst
+  tmSub =
+    record { tmvar = var ; _/tm_ = λ l tm subst → _/tm'_ l tm subst }
 
-    infixl 8 _/_
-
-        -- Apply a term substitution to a term
-    _/_ : ∀ {m n k} → Term m n → TermSub T m n k → Term k n
-    var x      / ρ = lift (lookup x ρ)
-    Λ t        / ρ = Λ (t / ρ ↑tp)
-    λ' a t     / ρ = λ' a (t / ρ ↑tm)
-    t [ a ]    / ρ = (t / ρ) [ a ]
-    s · t      / ρ = (s / ρ) · (t / ρ)
-
-  Fin′ : ℕ → ℕ → Set
-  Fin′ m _ = Fin m
-
-  varLift : TermLift Fin′
-  varLift = record { lift = var; _↑tm = VarSubst._↑; _↑tp = id }
-
-  infixl 8 _/Var_
-
-  _/Var_ : ∀ {m n k} → Term m n → Sub Fin m k → Term k n
-  _/Var_ = TermTermApp._/_ varLift
-
-  Term′ : ℕ → ℕ → Set
-  Term′ = flip Term
-
-  private
-    module ExpandSimple {n : ℕ} where
-      simple : Simple (Term′ n)
-      simple = record { var = var; weaken = λ t → t /Var VarSubst.wk }
-
-      open Simple simple public
-
-  open ExpandSimple  using (_↑; simple)
-  open TermTypeSubst using () renaming (weaken to weakenTp)
-
-  termLift : TermLift Term
-  termLift = record
-    { lift = id; _↑tm = _↑ ; _↑tp = λ ρ → map weakenTp ρ }
-
-  private
-    module ExpandSubst {n : ℕ} where
-      app : Application (Term′ n) (Term′ n)
-      app = record { _/_ = TermTermApp._/_ termLift {n = n} }
-
-      subst : Subst (flip Term n)
-      subst = record
-        { simple      = simple
-        ; application = app
-        }
-
-      open Subst subst public
-
-  open ExpandSubst public hiding (var; simple)
-
-  infix 8 _[/_]
-
-  -- Shorthand for single-variable term substitutions in terms
-  _[/_] : ∀ {m n} → Term (1 + m) n → Term m n → Term m n
-  s [/ t ] = s / sub t
-
-
+  open TermTerm tmSub TermTypeSubst.tySub public
+open TermTermSubst public
+  using ()
+  renaming (weaken to weakenTmTm ; _/_ to _/tmtm_ ; _[/_] to _[/tmtm_])
 

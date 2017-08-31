@@ -9,14 +9,10 @@ open import SystemInf.Explicit
 module Terms where
   open Types public
 
-  ↑τ_ = TypeSubst.weaken
-  ↑τt_ : ∀ {m n} → Term m n → Term (1 + m) (1 + n)
-  ↑τt_ = TermTermSubst.weaken ∘ TermTypeSubst.weaken
-  ↑Γ = CtxSubst.weaken
+  ↑τ = weakenTy
 
-  -- left : ∀ {m n} → (A B : Type n) → (u : Term m n) → Term m n
-  -- left A B u =
-  --   Λ (λ' (↑τ A →' var zero) (λ' (↑τ B →' var zero) ({!!} · {!!})))
+  ↑τt_ : ∀ {m n} → Term m n → Term (1 + m) (1 + n)
+  ↑τt_ = weakenTmTm ∘ weakenTmTy
 
   -- Top
   id : ∀ {m n} → Term m n
