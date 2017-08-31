@@ -2,12 +2,12 @@ module SystemInf.Explicit.TypeCheck where
 
 open import SystemInf.Prelude
 open import SystemInf.Type
+open import SystemInf.Ctx
 
 open import SystemInf.Explicit.Term
 open import SystemInf.Explicit.WtTerm
 
 open TypeSubst using () renaming (_[/_]  to _[/tp_])
-open CtxSubst  using () renaming (weaken to weakenCtx)
 
 data TyInf {m n} (Γ : Ctx m n) : Term m n → Set where
   ok  : ∀ {a} t → (wt : Γ ⊢ a ∈ t) → TyInf Γ a

@@ -3,6 +3,7 @@ module SystemInf.Explicit.Examples where
 open import SystemInf.Prelude
   hiding (id)
 open import SystemInf.Type
+open import SystemInf.Ctx
 
 open import SystemInf.Explicit
 
