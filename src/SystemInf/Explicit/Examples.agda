@@ -32,6 +32,7 @@ module Terms where
   or : ∀ {m n} → Term m n
   or = λ' 𝔹 (λ' 𝔹 (var (suc zero) [ 𝔹 ] · tt · var zero))
 
+  -- _×_
   pair : ∀ {m n} → Term m n
   pair = Λ (Λ (λ' A (λ' B (Λ (λ' (A' →' B' →' var zero) (var zero · a · b))))))
     where
@@ -51,6 +52,12 @@ module WtTerm where
 
   wt-id-test : ∀ {m n} {Γ : Ctx m n} → inferType Γ id ≡ ok Top wt-id
   wt-id-test = refl
+
+  wt-app-id-id : ∀ {m n} {Γ : Ctx m n} → Γ ⊢ app-id-id ∈ Top
+  wt-app-id-id = (wt-id [ Top ]) · wt-id
+
+  wt-app-id-id-test : ∀ {m n} {Γ : Ctx m n} → inferType Γ app-id-id ≡ ok Top wt-app-id-id
+  wt-app-id-id-test = refl
 
   -- 𝔹
   wt-tt : ∀ {m n} {Γ : Ctx m n} → Γ ⊢ tt ∈ 𝔹
