@@ -15,6 +15,8 @@ data Term (m n : ℕ) : Set where
   _[_]    : Term m n     → Type n         → Term m n  -- type application
   _·_     : Term m n     → Term m n       → Term m n  -- term application
 
+Term' = ∀ {m n} → Term m n
+
 module TermTypeSubst where
   open Subst.Generic Term
 

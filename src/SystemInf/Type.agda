@@ -123,6 +123,9 @@ module Types where
   _×_ : ∀ {n} → (A B : Type n) → Type n
   A × B = ∀' ((↑ A →' ↑ B →' var zero) →' var zero)
 
+  Pair : ∀ {n} → Type n
+  Pair = ∀' (∀' (var (suc zero) →' var zero →' var (suc zero) × var zero))
+
   _∪_ : ∀ {n} →  (A B : Type n) → Type n
   A ∪ B = ∀' ((↑ A →' var zero) →' (↑ B →' var zero) →' var zero)
 

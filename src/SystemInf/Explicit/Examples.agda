@@ -16,30 +16,28 @@ module Terms where
   ↑τt_ = weakenTmTm ∘ weakenTmTy
 
   -- Top
-  id : ∀ {m n} → Term m n
+  id : Term'
   id = Λ (λ' (var zero) (var zero))
 
-  app-id-id : ∀ {m n} → Term m n
-  app-id-id = id [ Types.Top ] · id
+  app-id-id : Term'
+  app-id-id = id [ Top ] · id
 
   -- 𝔹
-  tt : ∀ {m n} → Term m n
+  tt : Term'
   tt = Λ (λ' (var zero) (λ' (var zero) (var (suc zero))))
 
-  ff : ∀ {m n} → Term m n
+  ff : Term'
   ff = Λ (λ' (var zero) (λ' (var zero) (var zero)))
 
-  or : ∀ {m n} → Term m n
+  or : Term'
   or = λ' 𝔹 (λ' 𝔹 (var (suc zero) [ 𝔹 ] · tt · var zero))
 
   -- _×_
-  pair : ∀ {m n} → Term m n
-  pair = Λ (Λ (λ' A (λ' B (Λ (λ' (A' →' B' →' var zero) (var zero · a · b))))))
+  pair : Term'
+  pair = Λ (Λ (λ' A (λ' B (Λ (λ' (↑τ A →' ↑τ B →' var zero) (var zero · a · b))))))
     where
       A = var (suc zero)
-      A' = var (suc (suc zero))
       B = var zero
-      B' = var (suc zero)
       a = var (suc (suc zero))
       b = var (suc zero)
 
@@ -85,15 +83,8 @@ module WtTerm where
                → Γ ⊢ or · a · b ∈ 𝔹
   wt-or-app x y = wt-or · x · y
 
-  wt-pair-σ : ∀ {m} → Type m
-  wt-pair-σ =
-    ∀' (∀'
-       let A = var (suc zero)
-           B = var zero
-       in A →' B →' A × B)
-
   wt-pair : ∀ {m n} {Γ : Ctx m n}
-            → Γ ⊢ pair ∈ wt-pair-σ
+            → Γ ⊢ pair ∈ Pair
   wt-pair = Λ (Λ (
     let A = var (suc zero)
         B = var zero
@@ -104,5 +95,5 @@ module WtTerm where
     b = var (suc zero)
 
   wt-pair-test : ∀ {m n} {Γ : Ctx m n}
-                 → inferType Γ pair ≡ ok wt-pair-σ wt-pair
+                 → inferType Γ pair ≡ ok Pair wt-pair
   wt-pair-test = refl
