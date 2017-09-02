@@ -10,7 +10,8 @@ open import Data.String     public
   renaming (_≟_ to _≟𝕊_)
   hiding (fromList ; toList ; decSetoid ; setoid)
 open import Data.Empty
-
+open import Data.Product    public
+  hiding (map; zip; _×_)
 
 open import Relation.Binary.PropositionalEquality public
   hiding ([_] ; subst)

@@ -131,3 +131,6 @@ module Types where
 
   𝔹 : ∀ {n} → Type n
   𝔹 = ∀' (var zero →' var zero →' var zero)
+
+  If : ∀ {n} → Type n
+  If = ∀' (𝔹 →' var zero →' var zero →' var zero)
