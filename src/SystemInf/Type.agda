@@ -134,3 +134,12 @@ module Types where
 
   If : ∀ {n} → Type n
   If = ∀' (𝔹 →' var zero →' var zero →' var zero)
+
+  List : ∀ {n} → Type n → Type n
+  List A = ∀' (var zero →' (↑ A →' var zero →' var zero) →' var zero)
+
+  Nil : ∀ {n} → Type n
+  Nil = ∀' (List (var zero))
+
+  Cons : ∀ {n} →  Type n
+  Cons = ∀' (var zero →' List (var zero) →' List (var zero))
