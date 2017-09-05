@@ -41,6 +41,20 @@ module Terms where
       a = var (suc (suc zero))
       b = var (suc zero)
 
+  nil : Term'
+  nil = Λ (Λ (λ' (var zero) (λ' (var (suc zero) →' var zero →' var zero)
+                 (var (suc zero)))))
+
+  cons : Term'
+  cons = Λ {- U -} (λ' {- u -} (var zero) (λ' {- xs -} (List (var zero))
+           (Λ {- X -} (λ' {- x -} (var zero) (λ' {- y -} (var (suc zero) →' var zero →' var zero)
+                  let X  = var zero
+                      u  = var (suc (suc (suc zero)))
+                      xs = var (suc (suc zero))
+                      x  = var (suc zero)
+                      y  = var zero
+                  in (y · u · (xs [ X ] · x · y)))))))
+
 module WtTerm where
   open Terms
 
@@ -97,3 +111,9 @@ module WtTerm where
   wt-pair-test : ∀ {m n} {Γ : Ctx m n}
                  → inferType Γ pair ≡ ok Pair wt-pair
   wt-pair-test = refl
+
+  wt-nil-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → inferType Γ nil ≡ ok Nil wt
+  wt-nil-test = _ , refl
+
+  wt-cons-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → inferType Γ cons ≡ ok Cons wt
+  wt-cons-test = _ , refl
