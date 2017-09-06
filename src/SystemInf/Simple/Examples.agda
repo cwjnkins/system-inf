@@ -43,6 +43,12 @@ module Terms where
                             · (var (suc zero))))))))
          :: Pair
 
+  pair-tt-id : Term'
+  pair-tt-id = pair [ 𝔹 ] [ Top ] · tt · id'
+
+  pair-tt-id-bad : Term'
+  pair-tt-id-bad = pair · tt · id'
+
   nil : Term'
   nil = Λ{-U-} (Λ{-X-} (λ'{-n-} (λ'{-c-} (var (suc zero))))) :: Nil
 
@@ -70,7 +76,7 @@ module WtTerms where
   wt-app-id-id' : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ app-id-id' ≡ ok Top wt
   wt-app-id-id' = _ , refl
 
-  -- -- 𝔹
+  -- 𝔹
   wt-tt-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ tt ≡ ok 𝔹 wt
   wt-tt-test = _ , refl
 
@@ -85,6 +91,15 @@ module WtTerms where
                  ∃ λ wt → infType Γ pair ≡ ok Pair wt
   wt-pair-test = _ , refl
 
+  wt-pair-tt-id-test : ∀ {m n} {Γ : Ctx m n} →
+                       ∃ λ wt → infType Γ pair-tt-id ≡ ok (𝔹 × Top) wt
+  wt-pair-tt-id-test = _ , refl
+
+  wt-pair-tt-id-bad : ∀ {m n} {Γ : Ctx m n} →
+                        infType Γ pair-tt-id-bad ≡ bad _
+  wt-pair-tt-id-bad = refl
+
+  -- 𝕃
   wt-nil-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ nil ≡ ok Nil wt
   wt-nil-test = _ , refl
 
