@@ -19,6 +19,12 @@ open import Relation.Nullary public
 
 open import Function public
 
+-- non-dependent _$_
+infixr 0 _$'_
+_$'_ : ∀ {a b} {A : Set a} {B : Set b} →
+       (f : A → B) → (x : A) → B
+f $' x = f x
+
 module TrustMe where
 
   private postulate erasedBottom : ⊥
