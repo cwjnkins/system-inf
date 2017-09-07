@@ -77,7 +77,7 @@ module Terms where
          :: Cons
 
   list₁ : Term'
-  list₁ = cons ·[ tt ] · (cons ·[ tt ] · nil)
+  list₁ = cons ·[ tt ] · (cons ·[ tt ] · (nil [ 𝔹 ]))
 
 module WtTerms where
   open Terms
@@ -119,5 +119,5 @@ module WtTerms where
   wt-cons-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt →  infType Γ cons ≡ ok Cons wt
   wt-cons-test = _ , refl
 
-  -- wt-list₁ : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ list₁ ≡ ok (List 𝔹) wt
-  -- wt-list₁ = {!!}
+  wt-list₁ : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ list₁ ≡ ok (List 𝔹) wt
+  wt-list₁ = _ , refl
