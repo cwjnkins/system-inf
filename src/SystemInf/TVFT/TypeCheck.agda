@@ -48,44 +48,48 @@ infType Γ (a ·[ b ])with infType Γ a
   "(8) When inferring >_< ·[_]\n" ++ msg
 ... | ok (∀' (var zero →' t)) wt
                       with infType Γ b
-... | (bad msg)         = bad $'
+...   | (bad msg)       = bad $'
   "(9) When inferring _ ·[>_<]\n" ++ msg
-... | (ok t' wt')       = ok (t [/tp t' ]) (wt ·[ wt' ])
+...   | (ok t' wt')     = ok (t [/tp t' ]) (wt ·[ wt' ])
 infType Γ (a ·[ b ])
     | ok t wt         = bad $'
-  "(10) When inferring >_< ·[_]\nNot of type ∀' (var zero →' t)"
+  "(10) When inferring >_< ·[_]\n"
+    ++ "Inferred type " ++ showTy t ++ " not of the form ∀ z. (z → z)"
 infType Γ (a :: t)  with chkType Γ a t
 ... | bad msg         = bad $'
-  "(11) When inferring _ :: _\n" ++ msg
+  "(11) When inferring _ :: " ++ showTy t ++ "\n" ++ msg
 ... | ok .t wt        = ok t (ann t wt)
 
 -- chkType Γ (λ' a) t      = {!!}
 chkType Γ (λ' a) (s →' t)    with chkType (s ∷ Γ) a t
 ... | bad msg                  = bad $'
-  "(1) When checking λ _\n" ++ msg
+  "(1) When checking λ _ has type " ++ showTy (s →' t) ++ "\n" ++ msg
 ... | ok .t wt                 = ok (s →' t) (λ' wt)
 chkType Γ (λ' a) t           = bad $'
-  "(2) When checking λ _\nNot a (term) function type"
+  "(2) When checking λ _ has type " ++ showTy t ++ "\nNot a (term) function type"
 -- chkType Γ (Λ a) t       =
 chkType Γ (Λ a) (∀' t)       with chkType (weakenCtx Γ) a t
 ... | bad msg                  = bad $'
-  "(3) When checking Λ _\n" ++ msg
+  "(3) When checking Λ _ has type " ++ showTy (∀' t) ++ "\n" ++ msg
 ... | ok .t wt                 = ok (∀' t) (Λ wt)
 chkType Γ (Λ a) t            = bad $'
-  "(4) When checking Λ _\nNot a (type) function type"
+  "(4) When checking Λ _ has type " ++ showTy t
+    ++ "\nNot a (type) function type"
 chkType Γ (a :: t) t'      with t ≟T t'
-... | no ¬p                  = bad
-  "(5) When checking _ :: >_<\nGot _ != Expected _"
+... | no ¬p                  = bad $'
+  "(5) When checking _ :: >" ++ showTy t
+    ++ "<\nGot " ++ showTy t ++ " != Expected " ++ showTy t'
 ... | yes refl               with chkType Γ a t
 ...   | (bad msg)              = bad $'
-  "When checking >_< :: _\n" ++ msg
+  "(6) When checking >_< :: " ++ showTy t ++ "\n" ++ msg
 ...   | (ok .t wt)             = ok t (chkinf (ann t wt))
 chkType Γ a t              with infType Γ a
-... | bad msg                = bad
-  $' "When checking _ has type _\n" ++ msg
+... | bad msg                = bad $'
+  "(7) When checking _ has type " ++ showTy t ++ "\n" ++ msg
 ... | ok t' wt               with t ≟T t'
 ...   | (no ¬p)                = bad $'
-  "When checking _ has type _\nGot _ != Expected _"
+  "(8) When checking _ has type " ++ showTy t
+    ++ "\nGot "  ++ showTy t ++ "!= Expected "  ++ showTy t'
 ...   | (yes refl)             = ok t (chkinf wt)
 -- chkType Γ (var x) t     = {!!}
 -- chkType Γ (a · b) t     = {!!}

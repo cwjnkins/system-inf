@@ -146,3 +146,21 @@ module Types where
 
   Cons : ∀ {n} →  Type n
   Cons = ∀' (var zero →' List (var zero) →' List (var zero))
+
+module _ where
+-- Show
+  open import Data.Fin using (toℕ)
+
+  private
+    freshNames : (n : ℕ) → Fin n → String
+    freshNames n i = primShowChar ∘ primNatToChar ∘ ((123 ∸ n) +_) ∘ toℕ $ i
+
+  -- go
+  showTy : ∀ {n} → Type n → String
+  showTy {n} (var x) = freshNames n x
+  showTy (t →' t₁)   = "(" ++ showTy t ++ " → " ++ showTy t₁ ++ ")"
+  showTy {n} (∀' t)  = "∀ " ++ freshNames (suc n) zero ++ ". " ++ showTy t
+
+  private
+    test : showTy {0} (∀' (var zero →' var zero)) ≡ "∀ 'z'. ('z' → 'z')"
+    test = refl
