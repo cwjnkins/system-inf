@@ -55,9 +55,11 @@ infType Γ (a ·[ b ])
     | ok t wt         = bad $'
   "(10) When inferring >_< ·[_]\n"
     ++ "Inferred type " ++ showTy t ++ " not of the form ∀ z. (z → z)"
+infType Γ (a [·])   = bad $'
+  "(11) TODO"
 infType Γ (a :: t)  with chkType Γ a t
 ... | bad msg         = bad $'
-  "(11) When inferring _ :: " ++ showTy t ++ "\n" ++ msg
+  "(12) When inferring _ :: " ++ showTy t ++ "\n" ++ msg
 ... | ok .t wt        = ok t (ann t wt)
 
 -- chkType Γ (λ' a) t      = {!!}
