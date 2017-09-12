@@ -14,6 +14,8 @@ open import Data.String         public
 open import Data.Empty
 open import Data.Product        public
   hiding (map; zip; _×_)
+open import Data.Maybe          public
+  hiding (map; decSetoid; setoid)
 
 open import Relation.Binary.PropositionalEquality
                                 public
