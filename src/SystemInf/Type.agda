@@ -141,8 +141,11 @@ module Types where
   List : ∀ {n} → Type n → Type n
   List A = ∀' (var zero →' (↑ A →' var zero →' var zero) →' var zero)
 
+  Nil' : ∀ {n} → Type (1 + n)
+  Nil' = List (var zero)
+
   Nil : ∀ {n} → Type n
-  Nil = ∀' (List (var zero))
+  Nil = ∀' Nil'
 
   Cons : ∀ {n} →  Type n
   Cons = ∀' (var zero →' List (var zero) →' List (var zero))
