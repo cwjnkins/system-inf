@@ -150,6 +150,15 @@ module Types where
   Cons : ∀ {n} →  Type n
   Cons = ∀' (var zero →' List (var zero) →' List (var zero))
 
+  Either : ∀ {n} → (A B : Type n) → Type n
+  Either A B = ∀' ((↑ A →' var zero) →' (↑ B →' var zero) →' var zero)
+
+  Left : ∀ {n} → Type n
+  Left = ∀' (var zero →' ∀' (Either (var (suc zero)) (var zero)))
+
+  Right : ∀ {n} → Type n
+  Right = ∀' (var zero →' ∀' (Either (var zero) (var (suc zero))))
+
 module _ where
 -- Show
   open import Data.Fin using (toℕ)
