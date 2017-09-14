@@ -105,7 +105,7 @@ module TypeEquality where
   ... | yes refl               = yes refl
   x ≟T y                       = no TrustMe.unsafeNotEqual
 
-open TypeEquality using (_≟T_) public
+open TypeEquality using (_≟T_; _≟n_) public
 
 -- Some common types
 module Types where
