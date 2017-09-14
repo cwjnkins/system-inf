@@ -29,6 +29,9 @@ module Terms where
   tt : Term'
   tt = Λ (λ' (λ' (var (suc zero)))) :: 𝔹
 
+  ff : Term'
+  ff = Λ (λ' (λ' (var zero))) :: 𝔹
+
   or : Term'
   or = (λ' $' λ' $' var (suc zero) ·[ tt ] · var zero) :: (𝔹 →' 𝔹 →' 𝔹)
 
