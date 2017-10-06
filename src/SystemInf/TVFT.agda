@@ -11,7 +11,7 @@ module SystemInf.TVFT where
 -}
 
 open import SystemInf.Prelude
-open import SystemInf.Type
+open import SystemInf.Type.Curried
 
 open import SystemInf.TVFT.Term public
 open import SystemInf.TVFT.WtTerm public

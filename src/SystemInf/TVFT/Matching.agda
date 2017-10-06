@@ -1,7 +1,7 @@
 module SystemInf.TVFT.Matching where
 
 open import SystemInf.Prelude
-open import SystemInf.Type
+open import SystemInf.Type.Curried
 
 open TypeSubst using (_[/_])
 

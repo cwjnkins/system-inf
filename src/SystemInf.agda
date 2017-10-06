@@ -12,3 +12,8 @@ module Simple where
 
   open import SystemInf.Simple
   open import SystemInf.Simple.Examples
+
+module TVFT where
+
+  open import SystemInf.TVFT
+  open import SystemInf.TVFT.Examples

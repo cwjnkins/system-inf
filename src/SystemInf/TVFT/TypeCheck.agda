@@ -1,8 +1,9 @@
 module SystemInf.TVFT.TypeCheck where
 
 open import SystemInf.Prelude
-open import SystemInf.Type
-open import SystemInf.Ctx
+open import SystemInf.Type.Curried
+open import SystemInf.Ctx as Ctx
+open Ctx.Curried
 
 open import SystemInf.TVFT.Term
 open import SystemInf.TVFT.WtTerm

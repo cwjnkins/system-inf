@@ -1,7 +1,7 @@
 module SystemInf.TVFT.Term where
 
 open import SystemInf.Prelude
-open import SystemInf.Type
+open import SystemInf.Type.Curried
 open import SystemInf.Substitution as Subst
 
 infixl 9 _[_] _·_ _[·]
