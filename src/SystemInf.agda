@@ -1,7 +1,7 @@
 module SystemInf where
 
 open import SystemInf.Prelude
-open import SystemInf.Type
+import SystemInf.Type.Curried as CType
 
 module Explicit where
 

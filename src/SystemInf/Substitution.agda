@@ -1,7 +1,7 @@
 module SystemInf.Substitution where
 
 open import SystemInf.Prelude
-open import SystemInf.Type
+open import SystemInf.Type.Curried
 
 open import Data.Fin.Substitution public
 

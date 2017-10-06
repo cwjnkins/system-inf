@@ -2,8 +2,9 @@ module SystemInf.Simple.Examples where
 
 open import SystemInf.Prelude
   hiding (id)
-open import SystemInf.Type
-open import SystemInf.Ctx
+open import SystemInf.Type.Curried
+open import SystemInf.Ctx as Ctx
+open Ctx.Curried
 
 open import SystemInf.Simple
 

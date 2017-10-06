@@ -1,11 +1,12 @@
-module SystemInf.Type where
+module SystemInf.Type.Curried where
 
 open import SystemInf.Prelude
+  hiding (List)
 
 open import Data.Fin.Substitution
 open import Relation.Binary using (Decidable)
 
--- Code borrowed somewhat from https://github.com/sstucki/system-f-agda
+-- Code borrowed from https://github.com/sstucki/system-f-agda
 -- (Types, terms, etc)
 
 infixr 7 _→'_

@@ -4,8 +4,9 @@ open import SystemInf.Prelude
 
 open import Data.Fin.Substitution
 
-open import SystemInf.Type
-open import SystemInf.Ctx
+open import SystemInf.Type.Curried
+open import SystemInf.Ctx as Ctx
+open Ctx.Curried
 open import SystemInf.Explicit.Term
 
 ------------------------------------------------------------------------

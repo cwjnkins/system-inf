@@ -1,9 +1,10 @@
 module SystemInf.Explicit.Examples where
 
 open import SystemInf.Prelude
-  hiding (id)
-open import SystemInf.Type
-open import SystemInf.Ctx
+  hiding (id ; List)
+open import SystemInf.Type.Curried
+open import SystemInf.Ctx as Ctx
+open Ctx.Curried
 
 open import SystemInf.Explicit
 

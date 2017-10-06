@@ -6,6 +6,8 @@ open import Data.Fin as Fin
 open import Data.Vec            public
   hiding ([_])
   renaming (_++_ to _++𝕍_)
+open import Data.List as List   public
+  using (_∷_ ; []; List)
 open import Data.Char           public
   using (Char)
 open import Data.String         public
