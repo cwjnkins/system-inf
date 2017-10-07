@@ -60,20 +60,7 @@ open import Relation.Binary.PropositionalEquality.TrustMe
 
 module TypeEquality where
 
-  infix 4 _≡tp_ _≟n_
-
-  -- Equal successors have equal predecessors.
-  ≡suc : ∀ {n} {x y : Fin n} → Fin.suc x ≡ Fin.suc y → x ≡ y
-  ≡suc refl = refl
-
-  -- A decision procedure for equality of variable names.
-  _≟n_ : ∀ {n} → Decidable {A = Fin n} _≡_
-  zero  ≟n zero   = yes refl
-  suc x ≟n suc y  with x ≟n y
-  ... | yes x≡y   = yes (cong suc x≡y)
-  ... | no  x≢y   = no (x≢y ∘ ≡suc)
-  zero  ≟n suc y  = no λ()
-  suc x ≟n zero   = no λ()
+  infix 4 _≡tp_
 
   -- A shorthand for (syntactic) type equality.
   _≡tp_ : ∀ {n} → Type n → Type n → Set
@@ -93,7 +80,7 @@ module TypeEquality where
 
   -- A decision procedure for (syntactic) type equality
   _≟T_ : ∀ {n} → Decidable {A = Type n} _≡_
-  var x ≟T var y with x ≟n y
+  var x ≟T var y with x i≟ y
   ... | no ¬p                  = no (¬p ∘ ≡var)
   ... | yes refl               = yes refl
   (x →' x₁) ≟T (y →' y₁)
@@ -106,7 +93,7 @@ module TypeEquality where
   ... | yes refl               = yes refl
   x ≟T y                       = no TrustMe.unsafeNotEqual
 
-open TypeEquality using (_≟T_; _≟n_) public
+open TypeEquality using (_≟T_) public
 
 -- Some common types
 module Types where

@@ -3,6 +3,9 @@ module SystemInf.Prelude where
 open import Data.Nat            public
 open import Data.Fin as Fin
   using (Fin ; zero ; suc)      public
+open import Data.Fin.Properties public
+  using (suc-injective)
+  renaming (_≟_ to _i≟_)
 open import Data.Vec            public
   hiding ([_])
   renaming (_++_ to _++𝕍_)

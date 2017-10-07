@@ -36,7 +36,7 @@ unweakenTy x (∀' t)
     λ t' → returnM $' ∀' t'
 
 findVar : ∀ {n} → Fin (1 + n) → Type (1 + n) → Type n → Maybe (Type n)
-findVar x (var y) t with x ≟n y
+findVar x (var y) t with x i≟ y
 ... | no ¬p = nothing
 ... | yes p = just t
 findVar x (s₁ →' s₂) (t₁ →' t₂) with findVar x s₁ t₁
