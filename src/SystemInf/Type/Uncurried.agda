@@ -8,7 +8,7 @@ open import Relation.Binary using (Decidable)
 data Type (n : ℕ) : Set where
   var   : Fin n               → Type n
   Top Bot : Type n
-  ∀<_>_→'_ : ∀ m → List (Type (m + n)) → Type (m + n) → Type n
+  ∀<_>_→'_ : ∀ {l} m → Vec (Type (m + n)) l → Type (m + n) → Type n
 
 module TypeSubst where
   import Data.List as List
@@ -23,7 +23,7 @@ module TypeSubst where
     var x / σ = lift (lookup x σ)
     Top / σ = Top
     Bot / σ = Bot
-    (∀< m > xs →' τ) / σ = ∀< m > List.map (_/ σ ↑⋆ m) xs →' (τ / σ ↑⋆ m)
+    (∀< m > xs →' τ) / σ = ∀< m > map (_/ σ ↑⋆ m) xs →' (τ / σ ↑⋆ m)
 
   -- Defining the abstract members var and _/_ in
   -- Data.Fin.Substitution.TermSubst for T = Type gives us access to a

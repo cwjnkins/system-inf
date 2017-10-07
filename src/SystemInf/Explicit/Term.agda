@@ -18,7 +18,7 @@ data Term (m n : ℕ) : Set where
 Term' = ∀ {m n} → Term m n
 
 module TermTypeSubst where
-  open Subst.Generic Term
+  open Subst.Generic Type TypeSubst.typeSubst Term
 
   module _ {T} (l : Lift T Type) where
     open Lift l hiding (var)
@@ -43,7 +43,7 @@ open TermTypeSubst public
   renaming (weaken to weakenTmTy ; _/_ to _/tmty_ ; _[/_] to _[/tmty_])
 
 module TermTermSubst where
-  open Subst.Generic Term
+  open Subst.Generic Type TypeSubst.typeSubst Term
 
   module _ {T} (l : TmLift T) where
     open TmLift l

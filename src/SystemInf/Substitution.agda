@@ -1,23 +1,23 @@
 module SystemInf.Substitution where
 
 open import SystemInf.Prelude
-open import SystemInf.Type.Curried
+-- open import SystemInf.Type.Curried
 
 open import Data.Fin.Substitution public
 
-module Generic (Tm : ℕ → ℕ → Set) where
+module Generic (Ty : ℕ → Set) (tysub : TermSubst Ty) (Tm : ℕ → ℕ → Set) where
   ------------------------------------------------------------
   -- Substitutition of terms in types
   record TmTySubst : Set₁ where
     infixl 8 _/ty_
     field
-      _/ty_ : ∀ {T m n k} → (l : Lift T Type) → Tm m n → Sub T n k → Tm m k
+      _/ty_ : ∀ {T m n k} → (l : Lift T Ty) → Tm m n → Sub T n k → Tm m k
 
-  module TermType (tySubst : TmTySubst) where
-    open TmTySubst tySubst
-    open TypeSubst using (varLift; termLift; sub)
+  module TermType (tmtysub : TmTySubst) where
+    open TmTySubst tmtysub
+    open TermSubst tysub using (varLift; termLift; sub)
 
-    module Lifted {T} (lift : Lift T Type) {m} where
+    module Lifted {T} (lift : Lift T Ty) {m} where
       application : Application (Tm m) T
       application = record { _/_ = _/ty_ lift }
 
@@ -36,7 +36,7 @@ module Generic (Tm : ℕ → ℕ → Set) where
     infix 8 _[/_]
 
     -- Shorthand for single-variable type substitutions in terms
-    _[/_] : ∀ {m n} → Tm m (1 + n) → Type n → Tm m n
+    _[/_] : ∀ {m n} → Tm m (1 + n) → Ty n → Tm m n
     t [/ b ] = t / sub b
 
   ------------------------------------------------------------
