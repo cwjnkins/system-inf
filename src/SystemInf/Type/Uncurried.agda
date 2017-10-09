@@ -5,10 +5,13 @@ open import SystemInf.Prelude
 open import Data.Fin.Substitution
 open import Relation.Binary using (Decidable)
 
+infix 7 ∀<_,_>_→'_
+
 data Type (n : ℕ) : Set where
   var   : Fin n               → Type n
   Top Bot : Type n
-  ∀<_>_→'_ : ∀ {l} m → Vec (Type (m + n)) l → Type (m + n) → Type n
+  ∀<_,_>_→'_ : ∀ m l → Vec (Type (m + n)) l → Type (m + n) → Type n
+  -- type arguments, term arguments, result
 
 module TypeSubst where
   import Data.List as List
@@ -23,7 +26,7 @@ module TypeSubst where
     var x / σ = lift (lookup x σ)
     Top / σ = Top
     Bot / σ = Bot
-    (∀< m > xs →' τ) / σ = ∀< m > map (_/ σ ↑⋆ m) xs →' (τ / σ ↑⋆ m)
+    (∀< m , l > xs →' τ) / σ = ∀< m , l > map (_/ σ ↑⋆ m) xs →' (τ / σ ↑⋆ m)
 
   -- Defining the abstract members var and _/_ in
   -- Data.Fin.Substitution.TermSubst for T = Type gives us access to a
