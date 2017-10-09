@@ -6,9 +6,26 @@ open import SystemInf.Ctx
 
 open import SystemInf.TVFT.Term
 open import SystemInf.TVFT.WtTerm
+open import SystemInf.TVFT.Matching
 
 open TypeSubst using () renaming (_[/_]  to _[/tp_])
 
+open import Relation.Binary.PropositionalEquality
+  as PropEq
+  using ()
+
+data TyMatch {n} : Type (1 + n) → Type n → Set where
+  ok  : ∀ {t t'} → (s : Type n) → t [/tp s ] ≡ t' → TyMatch t t'
+  bad : ∀ {t t'} → (msg : String) → TyMatch t t'
+
+matchTy : ∀ {n} t t' → TyMatch {n} t t'
+matchTy s t     with findVar zero s t
+... | nothing     = bad "" -- incomparable types, or no mention of TVar
+... | just t'     with (s [/tp t' ]) ≟T t
+...   | (no ¬p)     = bad ""
+...   | (yes p)     = ok t' p
+
+-- Type Inference
 data TyInf {m n} (Γ : Ctx m n) : Term m n → Set where
   ok  : ∀ {a} t → (wt : Γ ⊢ a m: inf ∈ t) → TyInf Γ a
   bad : ∀ {a} → (msg : String) → TyInf Γ a
@@ -55,9 +72,11 @@ infType Γ (a ·[ b ])
     | ok t wt         = bad $'
   "(10) When inferring >_< ·[_]\n"
     ++ "Inferred type " ++ showTy t ++ " not of the form ∀ z. (z → z)"
+infType Γ (a [·])   = bad $'
+  "(11) Cannot infer implicit type application"
 infType Γ (a :: t)  with chkType Γ a t
 ... | bad msg         = bad $'
-  "(11) When inferring _ :: " ++ showTy t ++ "\n" ++ msg
+  "(12) When inferring _ :: " ++ showTy t ++ "\n" ++ msg
 ... | ok .t wt        = ok t (ann t wt)
 
 -- chkType Γ (λ' a) t      = {!!}
@@ -83,12 +102,23 @@ chkType Γ (a :: t) t'      with t ≟T t'
 ...   | (bad msg)              = bad $'
   "(6) When checking >_< :: " ++ showTy t ++ "\n" ++ msg
 ...   | (ok .t wt)             = ok t (chkinf (ann t wt))
+chkType Γ (a [·]) t        with infType Γ a
+... | bad msg                = bad $'
+  "(7)"
+... | ok (∀' t') wt          with matchTy t' t
+...   | (bad msg)              = bad $'
+  "(8)"
+...   | (ok s p)               = ok t $ PropEq.subst
+                                 (Γ ⊢ a [·] m: chk ∈_) p (wt [·])
+chkType Γ (a [·]) t | ok t' wt
+                             = bad $'
+  "(9)"
 chkType Γ a t              with infType Γ a
 ... | bad msg                = bad $'
-  "(7) When checking _ has type " ++ showTy t ++ "\n" ++ msg
+  "(10) When checking _ has type " ++ showTy t ++ "\n" ++ msg
 ... | ok t' wt               with t ≟T t'
 ...   | (no ¬p)                = bad $'
-  "(8) When checking _ has type " ++ showTy t
+  "(11) When checking _ has type " ++ showTy t
     ++ "\nGot "  ++ showTy t ++ "!= Expected "  ++ showTy t'
 ...   | (yes refl)             = ok t (chkinf wt)
 -- chkType Γ (var x) t     = {!!}

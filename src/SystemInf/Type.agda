@@ -105,7 +105,7 @@ module TypeEquality where
   ... | yes refl               = yes refl
   x ≟T y                       = no TrustMe.unsafeNotEqual
 
-open TypeEquality using (_≟T_) public
+open TypeEquality using (_≟T_; _≟n_) public
 
 -- Some common types
 module Types where
@@ -141,11 +141,23 @@ module Types where
   List : ∀ {n} → Type n → Type n
   List A = ∀' (var zero →' (↑ A →' var zero →' var zero) →' var zero)
 
+  Nil' : ∀ {n} → Type (1 + n)
+  Nil' = List (var zero)
+
   Nil : ∀ {n} → Type n
-  Nil = ∀' (List (var zero))
+  Nil = ∀' Nil'
 
   Cons : ∀ {n} →  Type n
   Cons = ∀' (var zero →' List (var zero) →' List (var zero))
+
+  Either : ∀ {n} → (A B : Type n) → Type n
+  Either A B = ∀' ((↑ A →' var zero) →' (↑ B →' var zero) →' var zero)
+
+  Left : ∀ {n} → Type n
+  Left = ∀' (var zero →' ∀' (Either (var (suc zero)) (var zero)))
+
+  Right : ∀ {n} → Type n
+  Right = ∀' (var zero →' ∀' (Either (var zero) (var (suc zero))))
 
 module _ where
 -- Show

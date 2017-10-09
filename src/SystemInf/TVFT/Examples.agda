@@ -29,6 +29,9 @@ module Terms where
   tt : Term'
   tt = Λ (λ' (λ' (var (suc zero)))) :: 𝔹
 
+  ff : Term'
+  ff = Λ (λ' (λ' (var zero))) :: 𝔹
+
   or : Term'
   or = (λ' $' λ' $' var (suc zero) ·[ tt ] · var zero) :: (𝔹 →' 𝔹 →' 𝔹)
 
@@ -79,6 +82,24 @@ module Terms where
   list₁ : Term'
   list₁ = cons ·[ tt ] · (cons ·[ tt ] · (nil [ 𝔹 ]))
 
+  list₂ : Term'
+  list₂ = cons ·[ tt ] · (cons ·[ tt ] · (nil [·]))
+
+  -- Either
+  left : Term'
+  left = (Λ{-A-} $' λ'{-a-} $' Λ{-B-} $' Λ{-X-} $' λ'{-l-} $' λ'{-r-}
+                 let l = var (suc zero)
+                     a = var (suc (suc zero))
+                 in l · a)
+         :: Left
+
+  isLeftTrue : Term'
+  isLeftTrue = (λ' $' var zero [ 𝔹 ] · (id [·]) · (λ' $' ff)) :: (Either 𝔹 Top →' 𝔹)
+
+  -- list₃ : Term'
+  -- list₃ = cons [·] · (left ·[ tt ]) · (nil [·])
+  --         :: List (Either 𝔹 Top)
+
 module WtTerms where
   open Terms
 
@@ -121,3 +142,20 @@ module WtTerms where
 
   wt-list₁ : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ list₁ ≡ ok (List 𝔹) wt
   wt-list₁ = _ , refl
+
+  wt-list₂ : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ list₂ ≡ ok (List 𝔹) wt
+  wt-list₂ = _ , refl
+
+  -- Either
+  wt-left : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ left ≡ ok Left wt
+  wt-left = _ , refl
+
+  wt-isLeftTrue : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ isLeftTrue ≡ ok (Either 𝔹 Top →' 𝔹) wt
+  wt-isLeftTrue = _ , refl
+
+  wt-isLeftTrueApp : ∀ {m n} {Γ : Ctx m n} →
+                     ∃ λ wt → infType Γ (isLeftTrue · (left ·[ tt ] [·])) ≡ ok 𝔹 wt
+  wt-isLeftTrueApp = _ , refl
+
+  -- wt-list₃ : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ list₃ ≡ ok Left wt
+  -- wt-list₃ = {!_ , refl!}

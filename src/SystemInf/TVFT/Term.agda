@@ -4,7 +4,7 @@ open import SystemInf.Prelude
 open import SystemInf.Type
 open import SystemInf.Substitution as Subst
 
-infixl 9 _[_] _·_
+infixl 9 _[_] _·_ _[·]
 infixl 9 _::_
 
 -- Untyped terms with up to m free term variables and up to n free
@@ -16,6 +16,7 @@ data Term (m n : ℕ) : Set where
   _[_]    : Term m n     → Type n   → Term m n  -- type application
   _·_     : Term m n     → Term m n → Term m n  -- term application
   _·[_]   : Term m n     → Term m n → Term m n  -- term and (inferred) type application
+  _[·]    : Term m n                → Term m n  -- type application (inferred)
   _::_    : Term m n     → Type n   → Term m n  -- term annotation
 
 Term' = ∀ {m n} → Term m n
@@ -35,8 +36,9 @@ module TermTypeSubst where
     λ' a       /ty' σ = λ' (a /ty' σ)
     (a [ t ])  /ty' σ = (a /ty' σ) [ t /tp σ ]
     (a · b)    /ty' σ = (a /ty' σ) · (b /ty' σ)
-    (a :: t)   /ty' σ = (a /ty' σ) :: (t /tp σ)
     (a ·[ b ]) /ty' σ = (a /ty' σ) ·[ b /ty' σ ]
+    (a [·])    /ty' σ = (a /ty' σ) [·]
+    (a :: t)   /ty' σ = (a /ty' σ) :: (t /tp σ)
 
   tySub : TmTySubst
   tySub =
@@ -60,6 +62,7 @@ module TermTermSubst where
     (a [ t ]) /tm' ρ = (a /tm' ρ) [ t ]
     (a · b)   /tm' ρ = (a /tm' ρ) · (b /tm' ρ)
     (a ·[ b ])/tm' ρ = (a /tm' ρ) ·[ b /tm' ρ ]
+    (a [·])   /tm' ρ = (a /tm' ρ) [·]
     (a :: t)  /tm' ρ = (a /tm' ρ) :: t
 
   tmSub : TmTmSubst
