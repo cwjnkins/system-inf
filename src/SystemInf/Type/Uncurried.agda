@@ -48,3 +48,50 @@ module TypeSubst where
 open TypeSubst public
   using ()
   renaming (weaken to weakenTy)
+
+module TypeEquality where
+  open import Relation.Binary.PropositionalEquality.TrustMe
+
+  infix 4 _≡tp_
+
+  -- A shorthand for (syntactic) type equality.
+  _≡tp_ : ∀ {n} → Type n → Type n → Set
+  a ≡tp b = a ≡ b
+
+  -- Equal type variables have equal names.
+  ≡var : ∀ {n} {x y : Fin n} → var x ≡tp var y → x ≡ y
+  ≡var refl = refl
+
+  -- Equal function types have equal domains.
+  ≡dom→ : ∀ {m n l} {ts₁ ts₂ : Vec _ l} {s₁ s₂ : Type (m + n)}
+          → (∀< m , l > ts₁ →' s₁) ≡tp (∀< m , l > ts₂ →' s₂)
+          → ts₁ ≡ ts₂
+  ≡dom→ refl = refl
+
+
+  -- Equal function types have equal codomains.
+  ≡cod→ : ∀ {m n l} {ts₁ ts₂ : Vec _ l} {s₁ s₂ : Type (m + n)}
+          → (∀< m , l  > ts₁ →' s₁) ≡tp (∀< m , l > ts₂ →' s₂)
+          → s₁ ≡ s₂
+  ≡cod→ refl = refl
+
+  {-# TERMINATING #-}
+  _T≟_ : ∀ {n} → Decidable {A = Type n} _≡_
+  var x T≟ var y  with x i≟ y
+  ... | no ¬p       = no (¬p ∘ ≡var)
+  ... | yes refl    = yes refl
+  Top T≟ Top      = yes refl
+  Bot T≟ Bot      = yes refl
+  (∀< m₁ , l₁ > (xs) →' τ₁)
+      T≟ (∀< m₂ , l₂ > ys →' τ₂)
+                 with m₁ ≟ m₂
+  ... | no ¬p      = no (λ { refl → ¬p refl})
+  ... | yes refl   with l₁ ≟ l₂
+  ...   | (no ¬q)    = no λ { refl → ¬q refl }
+  ...   | (yes refl) with (xs V≟ ys) _T≟_
+  ...     | (no ¬r)    = no λ { refl → ¬r refl}
+  ...     | (yes refl) with τ₁ T≟ τ₂
+  ...       | (no ¬s)    = no λ { refl → ¬s refl}
+  ...       | (yes refl) = yes refl
+  _ T≟ _ = no TrustMe.unsafeNotEqual
+
