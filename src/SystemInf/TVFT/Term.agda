@@ -48,28 +48,28 @@ module TermTypeSubst where
 open TermTypeSubst public
   using () renaming (weaken to weakenTmTy ; _/_ to _/tytm_; _[/_] to _[/tytm_])
 
-module TermTermSubst where
-  open Subst.Generic Type TypeSubst.typeSubst Term
+-- module TermTermSubst where
+--   open Subst.Generic Type TypeSubst.typeSubst Term
 
-  module _ {T} (l : TmLift T) where
-    open TmLift l
+--   module _ {T} (l : TmLift T) where
+--     open TmLift l
 
-    infixl 8 _/tm'_
-    _/tm'_ : ∀ {m n k} → Term m n → TmSub T m n k → Term k n
-    var x     /tm' ρ = lift (lookup x ρ)
-    Λ a       /tm' ρ = Λ (a /tm' ρ ↑ty)
-    λ' a      /tm' ρ = λ' (a /tm' ρ ↑tm)
-    (a [ t ]) /tm' ρ = (a /tm' ρ) [ t ]
-    (a · b)   /tm' ρ = (a /tm' ρ) · (b /tm' ρ)
-    (a ·[ b ])/tm' ρ = (a /tm' ρ) ·[ b /tm' ρ ]
-    (a [·])   /tm' ρ = (a /tm' ρ) [·]
-    (a :: t)  /tm' ρ = (a /tm' ρ) :: t
+--     infixl 8 _/tm'_
+--     _/tm'_ : ∀ {m n k} → Term m n → TmSub T m n k → Term k n
+--     var x     /tm' ρ = lift (lookup x ρ)
+--     Λ a       /tm' ρ = Λ (a /tm' ρ ↑ty)
+--     λ' a      /tm' ρ = λ' (a /tm' ρ ↑tm)
+--     (a [ t ]) /tm' ρ = (a /tm' ρ) [ t ]
+--     (a · b)   /tm' ρ = (a /tm' ρ) · (b /tm' ρ)
+--     (a ·[ b ])/tm' ρ = (a /tm' ρ) ·[ b /tm' ρ ]
+--     (a [·])   /tm' ρ = (a /tm' ρ) [·]
+--     (a :: t)  /tm' ρ = (a /tm' ρ) :: t
 
-  tmSub : TmTmSubst
-  tmSub =
-    record { tmvar = var ; _/tm_ = λ l tm subst → _/tm'_ l tm subst }
+--   tmSub : TmTmSubst
+--   tmSub =
+--     record { tmvar = var ; _/tm_ = λ l tm subst → _/tm'_ l tm subst }
 
-  open TermTerm tmSub TermTypeSubst.tySub public
-open TermTermSubst public
-  using ()
-  renaming (weaken to weakenTmTm ; _/_ to _/tmtm_ ; _[/_] to _[/tmtm_])
+--   open TermTerm tmSub TermTypeSubst.tySub public
+-- open TermTermSubst public
+--   using ()
+--   renaming (weaken to weakenTmTm ; _/_ to _/tmtm_ ; _[/_] to _[/tmtm_])

@@ -13,8 +13,8 @@ module Terms where
 
   ↑τ = weakenTy
 
-  ↑τt_ : ∀ {m n} → Term m n → Term (1 + m) (1 + n)
-  ↑τt_ = weakenTmTm ∘ weakenTmTy
+  -- ↑τt_ : ∀ {m n} → Term m n → Term (1 + m) (1 + n)
+  -- ↑τt_ = weakenTmTm ∘ weakenTmTy
 
   -- Top
   id : Term'
