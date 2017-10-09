@@ -56,6 +56,13 @@ module Terms where
                       y  = var zero
                   in (y · u · (xs [ X ] · x · y)))))))
 
+  list : Term'
+  list = cons [ 𝔹 ] · tt · (cons [ 𝔹 ] · tt · (nil [ 𝔹 ]))
+
+  -- Either
+  isLeftTrue : Term'
+  isLeftTrue = λ' (Either 𝔹 Top) $' var zero [ 𝔹 ] · (id [ 𝔹 ]) · λ' Top ff
+
 module WtTerm where
   open Terms
 
@@ -116,5 +123,15 @@ module WtTerm where
   wt-nil-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → inferType Γ nil ≡ ok Nil wt
   wt-nil-test = _ , refl
 
-  wt-cons-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → inferType Γ cons ≡ ok Cons wt
+  wt-cons-test : ∀ {m n} {Γ : Ctx m n}
+                 → ∃ λ wt → inferType Γ cons ≡ ok Cons wt
   wt-cons-test = _ , refl
+
+  wt-list-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt
+                 → inferType Γ list ≡ ok (List 𝔹) wt
+  wt-list-test = _ , refl
+
+   -- erase the wt at the end for an example of what we /don't/ want for type errors :)
+  wt-isLeftTrue-test : ∀ {m n} {Γ : Ctx m n}
+                       → ∃ λ wt → inferType Γ isLeftTrue ≡ ok (Either 𝔹 Top →' 𝔹) wt
+  wt-isLeftTrue-test = _ , refl

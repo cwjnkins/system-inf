@@ -1,7 +1,7 @@
 module SystemInf.Simple.Examples where
 
 open import SystemInf.Prelude
-  hiding (id)
+  hiding (id ; List)
 open import SystemInf.Type.Curried
 open import SystemInf.Ctx as Ctx
 open Ctx.Curried
@@ -29,6 +29,9 @@ module Terms where
   -- 𝔹
   tt : Term'
   tt = Λ (λ' (λ' (var (suc zero)))) :: 𝔹
+
+  ff : Term'
+  ff = Λ (λ' (λ' (var zero))) :: 𝔹
 
   or : Term'
   or = λ' (λ' (var (suc zero) [ 𝔹 ] · tt · var zero)) :: (𝔹 →' 𝔹 →' 𝔹)
@@ -62,6 +65,15 @@ module Terms where
              y  = var zero
          in y · u · (xs [ X ] · x · y))))))
          :: Cons
+
+  list : Term'
+  list = cons [ 𝔹 ] · tt · (cons [ 𝔹 ] · tt · (nil [ 𝔹 ]))
+
+  isLeftTrue : Term'
+  isLeftTrue = (λ' $'  var zero [ 𝔹 ]
+                       · (id' [ 𝔹 ]) -- still needs type application
+                       · (λ' ff))    -- inlined mono lambdas can be inferred
+               :: (Either 𝔹 Top →' 𝔹)
 
 module WtTerms where
   open Terms
@@ -101,8 +113,14 @@ module WtTerms where
   wt-pair-tt-id-bad = refl
 
   -- 𝕃
-  wt-nil-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ nil ≡ ok Nil wt
+  wt-nil-test : ∀ {m n} {Γ : Ctx m n}
+                → ∃ λ wt → infType Γ nil ≡ ok Nil wt
   wt-nil-test = _ , refl
 
-  wt-cons-test : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ cons ≡ ok Cons wt
+  wt-cons-test : ∀ {m n} {Γ : Ctx m n}
+                 → ∃ λ wt → infType Γ cons ≡ ok Cons wt
   wt-cons-test = _ , refl
+
+  wt-list-test : ∀ {m n} {Γ : Ctx m n}
+                 → ∃ λ wt → infType Γ list ≡ ok (List 𝔹) wt
+  wt-list-test = _ , refl
