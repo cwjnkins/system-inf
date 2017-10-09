@@ -52,4 +52,17 @@ module TrustMe where
   unsafeNotEqual : ∀ {a} {A : Set a} {x y : A} → ¬ (x ≡ y)
   unsafeNotEqual _ = erasedBottom
 
+module VecEq where
+  open import Level
+  _V≟_ : ∀ {ℓ} {m} {A : Set ℓ}
+         → (xs ys : Vec A m)
+         → (_A≟_ : (a b : A) → Dec (a ≡ b)) → Dec (xs ≡ ys)
+  ([] V≟ []) _A≟_  = yes refl
+  ((x ∷ xs) V≟ (y ∷ ys)) _A≟_
+                  with x A≟ y
+  ... | no ¬p        = no (λ { refl → ¬p refl})
+  ... | yes refl     with (xs V≟ ys) _A≟_
+  ...   | (no ¬q)      = no λ { refl → ¬q refl}
+  ...   | (yes refl)   = yes refl
 
+open VecEq public
