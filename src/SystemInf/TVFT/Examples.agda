@@ -28,18 +28,18 @@ module Terms where
 
   -- 𝔹
   tt : Term'
-  tt = Λ (λ' (λ' (var (suc zero)))) :: 𝔹
+  tt = Λ (λ' (λ' (var (# 1)))) :: 𝔹
 
   ff : Term'
   ff = Λ (λ' (λ' (var zero))) :: 𝔹
 
   or : Term'
-  or = (λ' $' λ' $' var (suc zero) ·[ tt ] · var zero) :: (𝔹 →' 𝔹 →' 𝔹)
+  or = (λ' $' λ' $' var (# 1) ·[ tt ] · var zero) :: (𝔹 →' 𝔹 →' 𝔹)
 
   if : Term'
   if = (Λ{-X-} $' λ'{-c-} $' λ'{-t-} $' λ'{-e-} $'
-       let c = var (suc (suc zero))
-           t = var (suc zero)
+       let c = var (# 2)
+           t = var (# 1)
            e = var zero
        in c ·[ t ] · e) :: If
 
@@ -47,8 +47,8 @@ module Terms where
   pair = (Λ{-A-} $' Λ{-B-} $' λ'{-a-} $' λ'{-b-} $'
            Λ{-X-} $' λ'{-p-} $'
            let p = var zero
-               a = var (suc (suc zero))
-               b = var (suc zero)
+               a = var (# 2)
+               b = var (# 1)
            in p · a · b)
          :: Pair
 
@@ -59,8 +59,8 @@ module Terms where
   pair' = (Λ{-A-} $' λ'{-a-} $' Λ{-B-} $' λ'{-b-} $'
             Λ{-X-} $' λ'{-p-} $'
             let p = var zero
-                a = var (suc (suc zero))
-                b = var (suc zero)
+                a = var (# 2)
+                b = var (# 1)
             in p · a · b)
           :: Pair'
 
@@ -68,14 +68,14 @@ module Terms where
   pair'-tt-id = pair' ·[ tt ] ·[ id ] -- note: not id'!
 
   nil : Term'
-  nil = Λ{-U-} (Λ{-X-} (λ'{-n-} (λ'{-c-} (var (suc zero))))) :: Nil
+  nil = Λ{-U-} (Λ{-X-} (λ'{-n-} (λ'{-c-} (var (# 1))))) :: Nil
 
   cons : Term'
   cons = (Λ{-U-} $' λ'{-u-} $' λ'{-xs-} $'
            Λ{-X-} $' λ'{-n-} $' λ'{-c-}
-           let u  = var (suc (suc (suc zero)))
-               xs = var (suc (suc zero))
-               n  = var (suc zero)
+           let u  = var (# 3)
+               xs = var (# 2)
+               n  = var (# 1)
                c  = var zero
            in c · u · (xs ·[ n ] · c))
          :: Cons
@@ -89,11 +89,12 @@ module Terms where
   -- Either
   left : Term'
   left = (Λ{-A-} $' λ'{-a-} $' Λ{-B-} $' Λ{-X-} $' λ'{-l-} $' λ'{-r-}
-                 let l = var (suc zero)
-                     a = var (suc (suc zero))
+                 let l = var (# 1)
+                     a = var (# 2)
                  in l · a)
          :: Left
 
+  -- TODO ∀ a. T → α
   isLeftTrue : Term'
   isLeftTrue = (λ' $' var zero [ 𝔹 ] · (id [·]) · (λ' $' ff)) :: (Either 𝔹 Top →' 𝔹)
 

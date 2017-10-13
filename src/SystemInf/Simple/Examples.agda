@@ -28,23 +28,23 @@ module Terms where
 
   -- 𝔹
   tt : Term'
-  tt = Λ (λ' (λ' (var (suc zero)))) :: 𝔹
+  tt = Λ (λ' (λ' (var (# 1)))) :: 𝔹
 
   ff : Term'
   ff = Λ (λ' (λ' (var zero))) :: 𝔹
 
   or : Term'
-  or = λ' (λ' (var (suc zero) [ 𝔹 ] · tt · var zero)) :: (𝔹 →' 𝔹 →' 𝔹)
+  or = λ' (λ' (var (# 1) [ 𝔹 ] · tt · var zero)) :: (𝔹 →' 𝔹 →' 𝔹)
 
   if : Term'
   if = Λ (λ' (λ' (λ'
-         (var (suc (suc zero)) [ var zero ] · var (suc zero) · var zero))))
+         (var (# 2) [ var zero ] · var (# 1) · var zero))))
        :: If
 
   pair : Term'
   pair = Λ (Λ (λ' (λ'
-           (Λ (λ' (var zero · var (suc (suc zero))
-                            · (var (suc zero))))))))
+           (Λ (λ' (var zero · var (# 2)
+                            · (var (# 1))))))))
          :: Pair
 
   pair-tt-id : Term'
@@ -54,14 +54,14 @@ module Terms where
   pair-tt-id-bad = pair · tt · id'
 
   nil : Term'
-  nil = Λ{-U-} (Λ{-X-} (λ'{-n-} (λ'{-c-} (var (suc zero))))) :: Nil
+  nil = Λ{-U-} (Λ{-X-} (λ'{-n-} (λ'{-c-} (var (# 1))))) :: Nil
 
   cons : Term'
   cons = Λ{-U-} (λ'{-u-} (λ'{-xs-} (Λ{-X-} (λ'{-x-} (λ'{-y-}
          let X  = var zero
-             u  = var (suc (suc (suc zero)))
-             xs = var (suc (suc zero))
-             x  = var (suc zero)
+             u  = var (# 3)
+             xs = var (# 2)
+             x  = var (# 1)
              y  = var zero
          in y · u · (xs [ X ] · x · y))))))
          :: Cons

@@ -25,34 +25,34 @@ module Terms where
 
   -- 𝔹
   tt : Term'
-  tt = Λ (λ' (var zero) (λ' (var zero) (var (suc zero))))
+  tt = Λ (λ' (var zero) (λ' (var zero) (var (# 1))))
 
   ff : Term'
   ff = Λ (λ' (var zero) (λ' (var zero) (var zero)))
 
   or : Term'
-  or = λ' 𝔹 (λ' 𝔹 (var (suc zero) [ 𝔹 ] · tt · var zero))
+  or = λ' 𝔹 (λ' 𝔹 (var (# 1) [ 𝔹 ] · tt · var zero))
 
   -- _×_
   pair : Term'
   pair = Λ (Λ (λ' A (λ' B (Λ (λ' (↑τ A →' ↑τ B →' var zero) (var zero · a · b))))))
     where
-      A = var (suc zero)
+      A = var (# 1)
       B = var zero
-      a = var (suc (suc zero))
-      b = var (suc zero)
+      a = var (# 2)
+      b = var (# 1)
 
   nil : Term'
-  nil = Λ (Λ (λ' (var zero) (λ' (var (suc zero) →' var zero →' var zero)
-                 (var (suc zero)))))
+  nil = Λ (Λ (λ' (var zero) (λ' (var (# 1) →' var zero →' var zero)
+                 (var (# 1)))))
 
   cons : Term'
   cons = Λ {- U -} (λ' {- u -} (var zero) (λ' {- xs -} (List (var zero))
-           (Λ {- X -} (λ' {- x -} (var zero) (λ' {- y -} (var (suc zero) →' var zero →' var zero)
+           (Λ {- X -} (λ' {- x -} (var zero) (λ' {- y -} (var (# 1) →' var zero →' var zero)
                   let X  = var zero
-                      u  = var (suc (suc (suc zero)))
-                      xs = var (suc (suc zero))
-                      x  = var (suc zero)
+                      u  = var (# 3)
+                      xs = var (# 2)
+                      x  = var (# 1)
                       y  = var zero
                   in (y · u · (xs [ X ] · x · y)))))))
 
@@ -81,7 +81,7 @@ module WtTerm where
 
   -- 𝔹
   wt-tt : ∀ {m n} {Γ : Ctx m n} → Γ ⊢ tt ∈ 𝔹
-  wt-tt = Λ (λ' (var zero) (λ' (var zero) (var (suc zero))))
+  wt-tt = Λ (λ' (var zero) (λ' (var zero) (var (# 1))))
 
   wt-tt-test : ∀ {m n} {Γ : Ctx m n} → inferType Γ tt ≡ ok 𝔹 wt-tt
   wt-tt-test = refl
@@ -94,7 +94,7 @@ module WtTerm where
 
   wt-or : ∀ {m n} {Γ : Ctx m n}
             → Γ ⊢ or ∈ 𝔹 →' 𝔹 →' 𝔹
-  wt-or = λ' 𝔹 (λ' 𝔹 (var (suc zero) [ 𝔹 ] · wt-tt · var zero))
+  wt-or = λ' 𝔹 (λ' 𝔹 (var (# 1) [ 𝔹 ] · wt-tt · var zero))
 
   wt-or-test : ∀ {m n} {Γ : Ctx m n} → inferType Γ or ≡ ok (𝔹 →' 𝔹 →' 𝔹) wt-or
   wt-or-test = refl
@@ -108,13 +108,13 @@ module WtTerm where
   wt-pair : ∀ {m n} {Γ : Ctx m n}
             → Γ ⊢ pair ∈ Pair
   wt-pair = Λ (Λ (
-    let A = var (suc zero)
+    let A = var (# 1)
         B = var zero
     in λ' A (λ' B (
           Λ (λ' (↑τ A →' ↑τ B →' var zero) (var zero · a · b))))))
     where
-    a = var (suc (suc zero))
-    b = var (suc zero)
+    a = var (# 2)
+    b = var (# 1)
 
   wt-pair-test : ∀ {m n} {Γ : Ctx m n}
                  → inferType Γ pair ≡ ok Pair wt-pair

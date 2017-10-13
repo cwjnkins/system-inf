@@ -2,7 +2,7 @@ module SystemInf.Prelude where
 
 open import Data.Nat            public
 open import Data.Fin as Fin
-  using (Fin ; zero ; suc)      public
+  using (Fin ; zero ; suc ; #_)      public
 open import Data.Fin.Properties public
   using (suc-injective)
   renaming (_≟_ to _i≟_)
