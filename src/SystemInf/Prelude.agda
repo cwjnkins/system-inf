@@ -66,3 +66,18 @@ module VecEq where
   ...   | (yes refl)   = yes refl
 
 open VecEq public
+
+module VecAll where
+  open import Data.Vec.All
+
+  toAll₂ : ∀ {a p} {l} {A B : Set a} {P : A → B → Set p}
+           → (xs : Vec A l) → (ys : Vec B l)
+           → (p? : (x : A) → (y : B) → Maybe (P x y))
+           → Maybe (All₂ P xs ys)
+  toAll₂ [] [] p? = just []
+  toAll₂ (x ∷ xs) (y ∷ ys) p? with p? x y
+  ... | nothing = nothing
+  ... | just pxy with toAll₂ xs ys p?
+  ... | nothing = nothing
+  ... | (just all-pxy) = just $' pxy ∷ all-pxy
+
