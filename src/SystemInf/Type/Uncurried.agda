@@ -15,6 +15,21 @@ data Type (n : ℕ) : Set where
   ∀<_,_>_→'_ : ∀ m l → Vec (Type (m + n)) l → Type (m + n) → Type n
   -- type arguments, term arguments, result
 
+data Type-∀-Agree {n : ℕ} : (S T : Type n) → Set where
+  ∀-agree : ∀ {m l} → (Ts₁ Ts₂ : Vec (Type $' m + n) l) → (S₁ S₂ : Type $' m + n)
+            → Type-∀-Agree (∀< m , l > Ts₁ →' S₁) (∀< m , l > Ts₂ →' S₂)
+
+∀-agree? : ∀ {n} → Decidable (Type-∀-Agree {n})
+∀-agree? (∀< m , l > x →' S) (∀< m₁ , l₁ > x₁ →' T)
+                     with m ≟ m₁ | l ≟ l₁
+... | no ¬p | _        = no λ { (∀-agree .x .x₁ .S .T) → ¬p refl}
+... | _     | (no ¬p)  = no λ { (∀-agree .x .x₁ .S .T) → ¬p refl }
+... | yes refl | (yes refl)
+                       = yes (∀-agree _ _ S T)
+∀-agree? S T           = no λ { (∀-agree {m} Ts₁ Ts₂ S₁ S₂) → TrustMe.unsafeNotEqual {x = m} refl}
+--                       ain't nobody got time for that
+  where open import Relation.Binary.PropositionalEquality.TrustMe
+
 module TypeSubst where
   import Data.List as List
   module TypeApp {T} (l : Lift T Type) where
@@ -84,17 +99,15 @@ module TypeEquality where
   ... | yes refl    = yes refl
   Top T≟ Top      = yes refl
   Bot T≟ Bot      = yes refl
-  (∀< m₁ , l₁ > (xs) →' τ₁)
-      T≟ (∀< m₂ , l₂ > ys →' τ₂)
-                 with m₁ ≟ m₂
-  ... | no ¬p      = no (λ { refl → ¬p refl})
-  ... | yes refl   with l₁ ≟ l₂
-  ...   | (no ¬q)    = no λ { refl → ¬q refl }
-  ...   | (yes refl) with (xs V≟ ys) _T≟_
-  ...     | (no ¬r)    = no λ { refl → ¬r refl}
-  ...     | (yes refl) with τ₁ T≟ τ₂
-  ...       | (no ¬s)    = no λ { refl → ¬s refl}
-  ...       | (yes refl) = yes refl
+  S@(∀< m₁ , l₁ > Ts₁ →' S₁) T≟ T@(∀< m₂ , l₂ > Ts₂ →' S₂)
+                  with ∀-agree? S T
+  ... | no ¬p       = no λ { refl → ¬p $' ∀-agree _ _ _ _}
+  ... | yes (∀-agree .Ts₁ .Ts₂ .S₁ .S₂)
+                   with (Ts₁ V≟ Ts₂) _T≟_  | S₁ T≟ S₂
+  ... | no ¬p | _    = no (λ { refl → ¬p refl})
+  ... | _ | no ¬p    = no (λ { refl → ¬p refl})
+  ... | yes refl | yes refl
+                     = yes refl
   _ T≟ _ = no TrustMe.unsafeNotEqual
 
 module Subtypes where
