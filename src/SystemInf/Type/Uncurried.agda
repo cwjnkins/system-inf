@@ -1,6 +1,8 @@
 module SystemInf.Type.Uncurried where
 
 open import SystemInf.Prelude
+open import Data.Vec.All as All
+  hiding (lookup ; map)
 
 open import Data.Fin.Substitution
 open import Relation.Binary using (Decidable)
@@ -95,3 +97,37 @@ module TypeEquality where
   ...       | (yes refl) = yes refl
   _ T≟ _ = no TrustMe.unsafeNotEqual
 
+module Subtypes where
+
+  -- need a variant mentioning two different vectors.
+  -- tuppled vec is going to be hairy
+  data _<:_ {n} : (S T : Type n) → Set where
+    srefl : ∀ X → X <: X
+    stop  : ∀ T → T <: Top
+    sbot  : ∀ T → Bot <: T
+    sfun  : ∀ {m l} (S U : Type $' m + n)
+            → S <: U
+            → (Ts Rs : Vec (Type $' m + n) l)
+            → All₂ _<:_ Ts Rs
+            → (∀< m , l > Rs →' S) <: (∀< m , l > Ts →' U)
+
+  private
+    -- test of transitivity, to make sure encoding is correct
+    <:-trans : ∀ {n} {S T U : Type n} → S <: T → T <: U → S <: U
+    <:-trans (srefl X) T<:U                = T<:U
+    <:-trans (stop T) (srefl .Top)         = stop T
+    <:-trans (stop T) (stop .Top)          = stop T
+    <:-trans (sbot T) T<:U                 = sbot _
+    <:-trans S<:T'@(sfun S U S<:T Ts Rs p) (srefl _) = S<:T'
+    <:-trans (sfun S U S<:T Ts Rs p)       (stop _) = stop _
+    <:-trans {n} (sfun {m} S U S<:T Ts Rs p) (sfun .{m} .U U' U'<:U Ts' .Ts q)
+      = sfun S U' (<:-trans S<:T U'<:U) Ts' Rs
+        (help {m = m} q p)
+      where
+        help : ∀ {l m} {Ts Ts' Rs : Vec (Type $' m + n) l }
+               → All₂ _<:_ Ts Ts' → All₂ _<:_ Ts' Rs
+               → All₂ _<:_ Ts Rs
+        help {Ts = []} {[]} {[]} ts<:ts' ts'<:rs
+          = ts'<:rs
+        help {m = m} {Ts = x ∷ Ts} {x₁ ∷ Ts'} {x₂ ∷ Rs} (t<:t' ∷ ts<:ts') (t'<:r ∷ ts'<:rs)
+          = (<:-trans t<:t' t'<:r) ∷ help {m = m} ts<:ts' ts'<:rs

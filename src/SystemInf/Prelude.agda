@@ -20,7 +20,7 @@ open import Data.Empty
 open import Data.Product        public
   hiding (map; zip; _×_)
 open import Data.Maybe          public
-  hiding (map; decSetoid; setoid)
+  hiding (map; decSetoid; setoid; All)
 
 open import Relation.Binary.PropositionalEquality
                                 public
