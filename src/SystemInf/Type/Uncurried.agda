@@ -144,3 +144,33 @@ module Subtypes where
           = ts'<:rs
         help {m = m} {Ts = x ∷ Ts} {x₁ ∷ Ts'} {x₂ ∷ Rs} (t<:t' ∷ ts<:ts') (t'<:r ∷ ts'<:rs)
           = (<:-trans t<:t' t'<:r) ∷ help {m = m} ts<:ts' ts'<:rs
+
+  {-# TERMINATING #-}
+  _<:?_ : ∀ {n} → (S T : Type n) → Maybe (S <: T)
+  var x <:? (var y)             with x i≟ y
+  ... | no ¬p                     = nothing
+  ... | yes refl                  = just $' srefl _
+  Top <:? Top                     = just $' stop _
+  Bot <:? T                       = just $' sbot _
+  S@(∀< m₁ , l₁ > Ts₁ →' S₁)
+   <:? T@(∀< m₂ , l₂ > Ts₂ →' S₂) with ∀-agree? S T
+  ... | no ¬p                       = nothing
+  ... | yes (∀-agree _ _ _ _)       with VecAll.toAll₂ Ts₂ Ts₁ _<:?_ | S₁ <:? S₂
+  ... | nothing | _                   = nothing
+  ... | _ | nothing                   = nothing
+  ... | (just Ts₁<:?Ts₂) | (just S₁<:?S₂)
+                                      = just $' sfun _ _ S₁<:?S₂ _ _ Ts₁<:?Ts₂
+  _ <:? _                       = nothing
+
+  private
+    open import Data.Bool using (T)
+    T₁ T₂ : ∀ {n} → Type n
+    T₁ = ∀< 1 , 1 > var zero ∷ [] →' Top
+
+    T₂ = ∀< 1 , 1 > var zero ∷ [] →' Bot
+
+    test₁ : ∀ {n} → T ∘ is-just $' _<:?_ {n} T₂ T₁
+    test₁ = _
+
+    test₂ : ∀ {n} → T ∘ is-nothing $' _<:?_ {n} T₁ T₂
+    test₂ = _
