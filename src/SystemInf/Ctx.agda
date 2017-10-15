@@ -44,8 +44,14 @@ module Uncurried where
     weaken : ∀ {m n} → Ctx m n → Ctx m (1 + n)
     weaken Γ = map TypeSubst.weaken Γ
 
+    weaken⋆ : ∀ l {m n} → Ctx m n → Ctx m (l + n)
+    weaken⋆ l Γ = Γ / TypeSubst.wk⋆ l
+
     -- Variable substitution (renaming) lifted to typing contexts
     _/Var_ : ∀ {m n k} → Sub Fin m k → Ctx k n → Ctx m n
     σ /Var Γ = map (λ x → lookup x Γ) σ
 
-  open CtxSubst public using () renaming (weaken to weakenCtx)
+  open CtxSubst public
+    using ()
+    renaming (weaken to weakenCtx
+             ; weaken⋆ to weakenCtx⋆)
