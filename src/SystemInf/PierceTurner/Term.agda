@@ -33,8 +33,8 @@ data ETerm (m n : ℕ) : Set where
                 → ETerm (l + m) (k + n) → ETerm m n
   -- application with explicit type arugments
   _[_]·_  : ∀ {k l} → ETerm m n
-           → Vec (Type n) l    -- all the types
-           → Vec (ETerm m n) k -- all the terms
+           → Vec (Type n) k    -- all the types
+           → Vec (ETerm m n) l -- all the terms
            → ETerm m n
   -- application w/o explicit type arguments
   _·_ : ∀ {k}
