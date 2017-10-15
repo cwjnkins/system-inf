@@ -174,3 +174,27 @@ module Subtypes where
 
     test₂ : ∀ {n} → T ∘ is-nothing $' _<:?_ {n} T₁ T₂
     test₂ = _
+
+  {-# TERMINATING #-}
+  _∧_ : ∀ {n} → (S T : Type n) → Type n
+  _∨_ : ∀ {n} → (S T : Type n) → Type n
+
+
+  S ∧ T                      with S <:? T | T <:? S
+  ... | just S<:T | _          = S
+  ... | _      | just T<:S     = T
+  S@(∀< m₁ , l₁ > Ts₁ →' S₁) ∧ T@(∀< m₂ , l₂ > Ts₂ →' S₂)
+      | nothing | nothing      with ∀-agree? S T
+  ... | no ¬p                    = Bot
+  ... | yes (∀-agree .Ts₁ .Ts₂ .S₁ .S₂)
+                                with 𝕍zipWith _∨_ Ts₁ Ts₂ | S₁ ∨ S₂
+  ... | Ts₃ | S₃                  = ∀< m₂ , l₂ > Ts₃ →' S₃
+  S ∧ T | nothing | nothing  = Bot
+
+  S ∨ T with S <:? T | T <:? S
+  S ∨ T | just S<:T  | _ = T
+  S ∨ T | _      | just T<:S = S
+  S ∨ T | nothing | nothing with ∀-agree? S T
+  ... | no  _ = Top
+  ... | yes (∀-agree {m} {l} Ts₁ Ts₂ S₁ S₂) with 𝕍zipWith _∧_ Ts₁ Ts₂ | S₁ ∨ S₂
+  ... | Ts₃ | S₃ = ∀< m , l > Ts₃ →' S₃

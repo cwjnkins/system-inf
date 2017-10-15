@@ -8,7 +8,7 @@ open import Data.Fin.Properties public
   renaming (_≟_ to _i≟_)
 open import Data.Vec            public
   hiding ([_])
-  renaming (_++_ to _++𝕍_)
+  renaming (_++_ to _++𝕍_ ; zipWith to 𝕍zipWith)
 open import Data.List as List   public
   using (_∷_ ; []; List)
 open import Data.Char           public
