@@ -1,6 +1,7 @@
 module SystemInf.Type.Uncurried where
 
 open import SystemInf.Prelude
+  hiding (id)
 open import Data.Vec.All as All
   hiding (lookup ; map)
 
@@ -62,9 +63,15 @@ module TypeSubst where
   _[/_] : ∀ {n} → Type (1 + n) → Type n → Type n
   a [/ b ] = a / sub b
 
+  open import Data.Nat.Properties.Simple
+
+  -- a substitution which only replaces the first k variables
+  subs : ∀ {x} n → Sub Type x n → Sub Type (x + n) n
+  subs n σ = σ ++𝕍 id
+
 open TypeSubst public
   using ()
-  renaming (weaken to weakenTy)
+  renaming (weaken to weakenTy ; subs to subsTy)
 
 module TypeEquality where
   open import Relation.Binary.PropositionalEquality.TrustMe
@@ -198,3 +205,4 @@ module Subtypes where
   ... | no  _ = Top
   ... | yes (∀-agree {m} {l} Ts₁ Ts₂ S₁ S₂) with 𝕍zipWith _∧_ Ts₁ Ts₂ | S₁ ∨ S₂
   ... | Ts₃ | S₃ = ∀< m , l > Ts₃ →' S₃
+open Subtypes public
