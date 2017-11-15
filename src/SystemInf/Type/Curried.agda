@@ -1,7 +1,7 @@
 module SystemInf.Type.Curried where
 
 open import SystemInf.Prelude
-  hiding (List)
+  hiding (List ; Either)
 
 open import Data.Fin.Substitution
 open import Relation.Binary using (Decidable)

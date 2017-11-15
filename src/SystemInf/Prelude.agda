@@ -1,8 +1,9 @@
 module SystemInf.Prelude where
 
 open import Data.Nat            public
+  hiding (_⊔_)
 open import Data.Fin as Fin
-  using (Fin ; zero ; suc ; #_)      public
+  using (Fin ; zero ; suc ; #_) public
 open import Data.Fin.Properties public
   using (suc-injective)
   renaming (_≟_ to _i≟_)
@@ -19,8 +20,12 @@ open import Data.String         public
 open import Data.Empty
 open import Data.Product        public
   hiding (map; zip; _×_)
+open import Data.Sum
+  hiding (map)
 open import Data.Maybe          public
   hiding (map; decSetoid; setoid; All)
+open import Data.Bool           public
+  hiding (_≟_; decSetoid)
 
 open import Relation.Binary.PropositionalEquality
                                 public
@@ -80,4 +85,25 @@ module VecAll where
   ... | just pxy with toAll₂ xs ys p?
   ... | nothing = nothing
   ... | (just all-pxy) = just $' pxy ∷ all-pxy
+
+module Either where
+  open import Level
+  Either : ∀ {a b} → (A : Set a) → (B : Set b) → Set (a ⊔ b)
+  Either A B = A ⊎ B
+
+  pattern left  a = inj₁ a
+  pattern right b = inj₂ b
+
+open Either public
+
+module SplitFin where
+
+  splitFin : ∀ {n} k → Fin (k + n) → Either (Fin k) (Fin n)
+  splitFin zero i = right i
+  splitFin (suc k) zero = left zero
+  splitFin (suc k) (suc i) with splitFin k i
+  ... | left  x = left (suc x)
+  ... | right y = right y
+
+open SplitFin public
 
