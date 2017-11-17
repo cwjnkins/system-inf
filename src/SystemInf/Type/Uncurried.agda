@@ -1,7 +1,7 @@
 module SystemInf.Type.Uncurried where
 
 open import SystemInf.Prelude
-  hiding (id)
+  hiding (id ; _∧_ ; _∨_)
 open import Data.Vec.All as All
   hiding (lookup ; map)
 

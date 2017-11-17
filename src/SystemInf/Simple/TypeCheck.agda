@@ -1,6 +1,7 @@
 module SystemInf.Simple.TypeCheck where
 
 open import SystemInf.Prelude
+  hiding (bad ; ok)
 open import SystemInf.Type.Curried
 open import SystemInf.Ctx as Ctx
 open Ctx.Curried

@@ -96,6 +96,22 @@ module Either where
 
 open Either public
 
+module Error where
+  open import Category.Monad
+
+  Error : ∀ {a} → (A : Set a) → Set a
+  Error = Either String
+
+  pattern bad a = left a
+  pattern ok a  = right  a
+
+  _>>=E_ : ∀ {a b} {A : Set a} {B : Set b} →
+             Error A → (A → Error B) → Error B
+  ok  x >>=E f = f x
+  bad y >>=E f = bad y
+
+open Error public
+
 module SplitFin where
 
   splitFin : ∀ {n} k → Fin (k + n) → Either (Fin k) (Fin n)

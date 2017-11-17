@@ -1,7 +1,7 @@
 module SystemInf.TVFT.Examples where
 
 open import SystemInf.Prelude
-  hiding (id ; List)
+  hiding (id ; List ; left ; right ; ok ; bad)
 open import SystemInf.Type.Curried
 open import SystemInf.Ctx as Ctx
 open Ctx.Curried
@@ -10,6 +10,7 @@ open import SystemInf.TVFT
 
 module Terms where
   open Types public
+  module T = Types
 
   ↑τ = weakenTy
 
@@ -96,7 +97,7 @@ module Terms where
 
   -- TODO ∀ a. T → α
   isLeftTrue : Term'
-  isLeftTrue = (λ' $' var zero [ 𝔹 ] · (id [·]) · (λ' $' ff)) :: (Either 𝔹 Top →' 𝔹)
+  isLeftTrue = (λ' $' var zero [ 𝔹 ] · (id [·]) · (λ' $' ff)) :: (T.Either 𝔹 Top →' 𝔹)
 
   -- list₃ : Term'
   -- list₃ = cons [·] · (left ·[ tt ]) · (nil [·])
@@ -152,7 +153,7 @@ module WtTerms where
   wt-left : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ left ≡ ok Left wt
   wt-left = _ , refl
 
-  wt-isLeftTrue : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ isLeftTrue ≡ ok (Either 𝔹 Top →' 𝔹) wt
+  wt-isLeftTrue : ∀ {m n} {Γ : Ctx m n} → ∃ λ wt → infType Γ isLeftTrue ≡ ok (T.Either 𝔹 Top →' 𝔹) wt
   wt-isLeftTrue = _ , refl
 
   wt-isLeftTrueApp : ∀ {m n} {Γ : Ctx m n} →

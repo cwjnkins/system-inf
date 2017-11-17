@@ -1,7 +1,7 @@
 module SystemInf.Explicit.Examples where
 
 open import SystemInf.Prelude
-  hiding (id ; List)
+  hiding (id ; List ; ok ; bad)
 open import SystemInf.Type.Curried
 open import SystemInf.Ctx as Ctx
 open Ctx.Curried
@@ -10,6 +10,7 @@ open import SystemInf.Explicit
 
 module Terms where
   open Types public
+  module T = Types
 
   ↑τ = weakenTy
 
@@ -61,7 +62,7 @@ module Terms where
 
   -- Either
   isLeftTrue : Term'
-  isLeftTrue = λ' (Either 𝔹 Top) $' var zero [ 𝔹 ] · (id [ 𝔹 ]) · λ' Top ff
+  isLeftTrue = λ' (T.Either 𝔹 Top) $' var zero [ 𝔹 ] · (id [ 𝔹 ]) · λ' Top ff
 
 module WtTerm where
   open Terms
@@ -133,5 +134,5 @@ module WtTerm where
 
    -- erase the wt at the end for an example of what we /don't/ want for type errors :)
   wt-isLeftTrue-test : ∀ {m n} {Γ : Ctx m n}
-                       → ∃ λ wt → inferType Γ isLeftTrue ≡ ok (Either 𝔹 Top →' 𝔹) wt
+                       → ∃ λ wt → inferType Γ isLeftTrue ≡ ok (T.Either 𝔹 Top →' 𝔹) wt
   wt-isLeftTrue-test = _ , refl

@@ -1,7 +1,7 @@
 module SystemInf.Simple.Examples where
 
 open import SystemInf.Prelude
-  hiding (id ; List)
+  hiding (id ; List ; Either ; bad ; ok)
 open import SystemInf.Type.Curried
 open import SystemInf.Ctx as Ctx
 open Ctx.Curried
