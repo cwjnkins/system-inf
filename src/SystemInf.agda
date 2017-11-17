@@ -18,6 +18,10 @@ module TVFT where
   open import SystemInf.TVFT
   open import SystemInf.TVFT.Examples
 
+module TVFC where
+
+  open import SystemInf.TVFC
+
 module PierceTurner where
 
   open import SystemInf.PierceTurner
